@@ -1,7 +1,7 @@
 %% 1 Matlab Basic
-img = imread('img/bob.JPG');
-imshow(img);
-imwrite(img, 'img/bob_saved.png');
+I = imread('img/bob.JPG');
+imshow(I);
+imwrite(I, 'img/bob_saved.png');
 
 %% 2 Image Representation
 I = imread('img/bob.JPG');
@@ -10,34 +10,87 @@ G = I(:,:,2);
 B = I(:,:,3);
 
 figure
-subplot(2,2,1);
+subplot(2,3,1);
 imshow(I);
 title('Original');
-subplot(2,2,2);
+subplot(2,3,2);
 imshow(R);
 title('Red chanel');
-subplot(2,2,3);
+subplot(2,3,3);
 imshow(G);
 title('Green chanel');
-subplot(2,2,4);
+subplot(2,3,4);
 imshow(B);
 title('Blue chanel');
-
-figure
+subplot(2,3,5);
 gray_img = rgb2gray(I);
 imshow(gray_img);
 title('Grayscale Image');
 
 %% 3 Threshold and Color Space
-I = imread('img/bob_saved.png');
+I = imread('img/bob.JPG');
 gray_img = rgb2gray(I);
+thresholdValue = 128;
 
-thresh = adaptthresh(gray_img);
-binary = imbinarize(gray_img, thresh);
+BinaryMask = gray_img > thresholdValue;
+ThreshImg = gray_img;
+ThreshImg(ThreshImg < thresholdValue) = 0;
+
+figure;
+subplot(2,1,1);
+imshow(BinaryMask);
+title('Binary Mask');
+subplot(2,1,2);
+imshow(ThreshImg);
+title('Img < Threshold set to 0');
+
+GreenFilt = I;
+GreenFilt(:,:,1) = 0;
+GreenFilt(:,:,3) = 0;
+%GreenFilt(GreenFilt < thresholdValue) = 0;
+
+% MATLAB COLOR THRESHOLD APP: HSV FUNCTION
+HSV = rgb2hsv(I);
+% Define thresholds for channel 1 based on histogram settings
+channel1Min = 0.192;
+channel1Max = 0.473;
+% Define thresholds for channel 2 based on histogram settings
+channel2Min = 0.320;
+channel2Max = 1.000;
+% Define thresholds for channel 3 based on histogram settings
+channel3Min = 0.000;
+channel3Max = 1.000;
+% Create mask based on chosen histogram thresholds
+sliderBW = (HSV(:,:,1) >= channel1Min ) & (HSV(:,:,1) <= channel1Max) & ...
+           (HSV(:,:,2) >= channel2Min ) & (HSV(:,:,2) <= channel2Max) & ...
+           (HSV(:,:,3) >= channel3Min ) & (HSV(:,:,3) <= channel3Max);
+BW = sliderBW;
+% Initialize output masked image based on input image.
+maskedRGBImage = I;
+% Set background pixels where BW is false to zero.
+maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
+
+% Convert to RGB to HSV -> change Hue(color) -> back to RGB
+HSVPic = rgb2hsv(maskedRGBImage);
+HSVPic(:,:,1) = mod(HSVPic(:,:,1) + 0.35, 1);  % +0.35(around 100 degrees on colorwheel) look at HSV App
+HueChange = hsv2rgb(HSVPic);
+
+% Add color change on original image
 
 figure
-imshow(binary);
-title('Threshold');
+subplot(2,2,1);
+imshow(I);
+title('Original Image');
+subplot(2,2,2);
+imshow(maskedRGBImage);
+title('Green Isolation');
+subplot(2,2,3);
+imshow(HueChange);
+title('Blue is the new Green');
+subplot(2,2,4);
+imshow(HueChange);
+title('New Prada Bag');
+
 %% 4 Spatial operator and convolution
 
 %% 5 Calibration and Measurement
