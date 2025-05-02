@@ -28,6 +28,9 @@ imshow(gray_img);
 title('Grayscale Image');
 
 %% 3 Threshold and Color Space
+clc;
+clear;
+
 I = imread('img/bob.JPG');
 gray_img = rgb2gray(I);
 thresholdValue = 128;
@@ -64,11 +67,11 @@ channel3Max = 1.000;
 sliderBW = (HSV(:,:,1) >= channel1Min ) & (HSV(:,:,1) <= channel1Max) & ...
            (HSV(:,:,2) >= channel2Min ) & (HSV(:,:,2) <= channel2Max) & ...
            (HSV(:,:,3) >= channel3Min ) & (HSV(:,:,3) <= channel3Max);
-BW = sliderBW;
+BW_edge = sliderBW;
 % Initialize output masked image based on input image.
 maskedRGBImage = I;
 % Set background pixels where BW is false to zero.
-maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
+maskedRGBImage(repmat(~BW_edge,[1 1 3])) = 0;
 
 % Convert to RGB to HSV -> change Hue(color) -> back to RGB
 HSVPic = rgb2hsv(maskedRGBImage);
@@ -92,5 +95,67 @@ imshow(HueChange);
 title('New Prada Bag');
 
 %% 4 Spatial operator and convolution
+clc;
+clear;
+I = imread("img\calendar_speckle10.jpg");
+Idoub = im2double(I);
 
+% --- MATLAB built in edge-functions ---
+BW_edge = edge(Idoub,"sobel");
+BW_edge_blurred = imgaussfilt(double(BW_edge),1);
+
+% --- Own convolution edgedetection ---
+sobel_x = fspecial('sobel');
+sobel_y = sobel_x';
+Ix = conv2(Idoub, sobel_x, 'same');
+Iy = conv2(Idoub, sobel_y, 'same');
+gradmag = sqrt(Ix.^2 + Iy.^2);
+gradmag_norm = gradmag / max(gradmag(:));
+gauss_filter = fspecial('gaussian', [5 5], 1);
+gradmag_blurred = imfilter(gradmag_norm, gauss_filter, 'same');
+
+% --- Plot Result ---
+
+figure;
+sgtitle('Compare between edge detection');
+subplot(2,2,1);
+imshow(BW_edge);
+title('Edge() Sobel');
+subplot(2,2,2);
+imshow(gradmag, []);
+title('Conv2 + fspecial (Sobel)');
+subplot(2,2,3);
+imshow(BW_edge_blurred);
+title('Edge + Gaussian');
+subplot(2,2,4);
+imshow(gradmag_blurred, []);
+title('Conv2 + fspecial + Gaussian');
+
+sobel = fspecial('sobel');
+gauss = fspecial('gaussian', [5 5], 1);
+n = 1000;
+% A = (I*s)*g Img*sobel then * gauss
+tic
+for i = 1:n
+    temp = conv2(Idoub, sobel, "same");
+    A = conv2(temp, gauss,"same");
+end
+tA = toc;
+
+% B = I*(s*g) combine sobel + gauss then one instance of conv with img
+% Sobel + Gauss creates a new filter that we use instead for faster conv
+sob_Gauss = conv2(sobel,gauss, "same");
+tic
+for i = 1:n
+    B = conv2(Idoub, sob_Gauss, "same");
+end
+tB = toc;
+
+disp(['Time A:',num2str(tA)]);
+disp(['Time B:',num2str(tB)]);
+diff = abs(A - B);
+
+figure;
+imshow(diff, []);
+title('Differense in Conv order');
 %% 5 Calibration and Measurement
