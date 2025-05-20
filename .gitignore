@@ -1,4 +1,4 @@
-Lab3DAsh/main.aux
-Lab3DAsh/main.log
-Lab3DAsh/main.out
-Lab3DAsh/main.synctex.gz
+*.aux
+*.log
+*.out
+*.synctex.gz
