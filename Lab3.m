@@ -1,9 +1,15 @@
 %% 1 Matlab Basic
+clc;
+clear;
+
 I = imread('img/bob.JPG');
 imshow(I);
 imwrite(I, 'img/bob_saved.png');
 
 %% 2 Image Representation
+clc;
+clear;
+
 I = imread('img/bob.JPG');
 R = I(:,:,1);
 G = I(:,:,2);
@@ -47,10 +53,15 @@ subplot(2,1,2);
 imshow(ThreshImg);
 title('Img < Threshold set to 0');
 
-GreenFilt = I;
-GreenFilt(:,:,1) = 0;
-GreenFilt(:,:,3) = 0;
-%GreenFilt(GreenFilt < thresholdValue) = 0;
+I = im2double(I);
+R = I(:,:,1);
+G = I(:,:,2);
+B = I(:,:,3);
+greenMask = (G > 0.3) & (G > R + 0.05) & (G > B + 0.05);
+GreenOnly = zeros(size(I));
+GreenOnly(:,:,1) = R .* greenMask;
+GreenOnly(:,:,2) = G .* greenMask;
+GreenOnly(:,:,3) = B .* greenMask;
 
 % MATLAB COLOR THRESHOLD APP: HSV FUNCTION
 HSV = rgb2hsv(I);
@@ -78,20 +89,21 @@ HSVPic = rgb2hsv(maskedRGBImage);
 HSVPic(:,:,1) = mod(HSVPic(:,:,1) + 0.35, 1);  % +0.35(around 100 degrees on colorwheel) look at HSV App
 HueChange = hsv2rgb(HSVPic);
 
-% Add color change on original image
+PradaBlue = I;
+PradaBlue(repmat(BW_edge,[1 1 3])) = HueChange(repmat(BW_edge,[1 1 3]));
 
 figure
 subplot(2,2,1);
-imshow(I);
-title('Original Image');
+imshow(GreenOnly);
+title('GreenMask');
 subplot(2,2,2);
 imshow(maskedRGBImage);
-title('Green Isolation');
+title('Green HSV filter');
 subplot(2,2,3);
 imshow(HueChange);
-title('Blue is the new Green');
+title('Blue Bag');
 subplot(2,2,4);
-imshow(HueChange);
+imshow(PradaBlue);
 title('New Prada Bag');
 
 %% 4 Spatial operator and convolution
@@ -159,3 +171,47 @@ figure;
 imshow(diff, []);
 title('Differense in Conv order');
 %% 5 Calibration and Measurement
+
+%imshow('img\pen1.JPG');
+imshow('img\pen2.JPG');
+I1 = imread('img\pen1.JPG');
+I2 = imread('img\pen2.JPG');
+%datacursormode on
+
+x1 = 1589;
+x2 = 1094;
+y1 = 50;
+y2 = 41;
+x3 = 1552;
+x4 = 1024;
+y3 = 854;
+y4 = 863;
+
+h1 = sqrt((x2 - x1)^2 + (y2 - y1)^2);
+h2 = sqrt((x4 - x3)^2 + (y4 - y3)^2);
+H = 140;
+f = 1000;
+
+Z1 = f*(H/h1);
+Z2 = f*(H/h2);
+
+U1 = undistortImage(I1,cameraParams,'OutputView','full');
+U2 = undistortImage(I2,cameraParams,'OutputView','full');
+imshow(U2);
+
+ux1 = 2177;
+ux2 = 1638;
+uy1 = 1465;
+uy2 = 1469;
+u2x1 = 2245;
+u2x2 = 1690;
+u2y1 = 537;
+u2y2 = 537;
+
+Zu1 = sqrt((ux2 - ux1)^2 + (uy2 - uy1)^2);
+Zu2 = sqrt((u2x2 - u2x1)^2 + (u2y2 - u2y1)^2);
+
+fprintf("Z1 (före undistort): %.2f mm\n", Z1);
+fprintf("Z2 (före undistort): %.2f mm\n", Z2);
+fprintf("Zu1 (efter undistort): %.2f mm\n", Zu1);
+fprintf("Zu2 (efter undistort): %.2f mm\n", Zu2);
