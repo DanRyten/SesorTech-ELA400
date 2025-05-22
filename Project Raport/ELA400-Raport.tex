@@ -63,6 +63,31 @@ jge21002@student.mdu.se}
 
 
 \section{Method}
+\label{section:method}
+\subsection{Theory}
+The LSM6DSO sensor integrates both a gyroscope and an accelerometer, allowing it to measure both angular velocity and linear acceleration. But the accelerometer is sensitive to linear motion and gravity, whereas the gyroscope tracks rotational motion. So to rely solely on one of the sensor makes it difficult to accurately estimate orientation.
+
+To combat this flaw, a complementary filter or Kalman filter can be used to combine the strengths of both sensors. These filters fuse the data, compensating for the weaknesses of each: the gyroscope’s drift is corrected by the accelerometer, and the accelerometer’s noise is smoothed by the gyroscope. This yields a more stable and accurate estimate of the sensor's orientation, which then can then be used to interpret specific hand positions or gestures used in sign language.
+
+\subsection{Hardware}
+A simple hardware setup was used, consisting of an LSM6DSO sensor connected to a Raspberry Pi board. This configuration enables real-time acquisition of inertial measurements and future integration into wearable form factors.
+\subsection{Software}
+
+To enable parallel development of hardware and software, test data simulating sensor readings was first generated and used in place of live data. A Python script was developed to read this data from a CSV file, containing measurements from both the accelerometer and gyroscope in the X, Y, and Z axes.
+
+From these raw values, pitch and roll angles were calculated independently using the accelerometer and gyroscope. The accelerometer-derived angles were calculated using trigonometric functions, based on the ratio of acceleration in each axis, whereas the gyroscope-derived angles were obtained by integrating the angular velocity over time.
+
+As mentioned in the theory subsection, each sensor has limitation. That will be mitigated by implementing a \textbf{complementary filter}. This filter combines both data sources by weighting them according to their respective reliability: the short-term precision of the gyroscope and the long-term stability of the accelerometer. The resulting output provides a more accurate and stable estimate of the sensor's orientation, specifically the pitch (vertical bending) and roll (side tilt) of the finger.
+
+The code process can be summarized in the following steps:
+\begin{enumerate}
+    \item Read sensor data (accelerometer and gyroscope in X, Y, Z).
+    \item Calculate pitch and roll angles from accelerometer data using trigonometry.
+    \item Convert gyroscope angular velocities to angles by integrating over time.
+    \item Apply a complementary filter to fuse accelerometer and gyroscope angles.
+    \item Output the filtered pitch and roll angles in degrees.
+\end{enumerate}
+
 
 \subsection{Methodology}
 
