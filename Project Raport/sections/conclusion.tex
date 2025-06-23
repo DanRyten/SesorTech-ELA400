@@ -1,0 +1,16 @@
+\section{Conclusion}
+
+Compared to more expensive alternatives such as flex sensors or optical systems, gyroscopes sensor shows potential as a low-cost option. With more suitable sensors, meaning larger and/or easier to work with, or a more precise lab equipment for the hardware would be required going forward.
+
+With a cluster of sensors a detailed model of the user's hand position could be made and compared through simple case-based reasoning to output at least signed letters.
+
+The software has only been evaluated using simulated sensor data. Therefore, no definitive conclusions can be drawn regarding its real-time performance or accuracy when applied to actual finger movements. Further testing with physical sensors and real-world motion would be required to validate the functionality and reliability of the system.
+
+\subsection{Future Work}
+For future work there are some key areas that can be developed.
+
+With further development of the software the position of the sensor relative to a reference point could be estimated. With pitch, roll and known distance between sensor and joint axes, an approximate estimation in x,y and z can be inferred. This would need to take into account possible drift and noise, but this is based on the principle that a finger gesture corresponds to a unique combination of joint angles and direction. In other words, the sensor can achieve a unique combination of position and orientation for a given gesture.
+
+Also, add the other fingers together with a mounting system on the hand, so that the entire hand can be monitored and measured. And for the LSM6DSO sensor, it only has two addresses so if it is going to be used for the entire hand, a multiplexer has to be used to be able to read all sensors.
+
+Finally, it would be beneficial to work on a dataset of hand positions to have as reference and compare measurements to, and decide if specific signs are gestured. 

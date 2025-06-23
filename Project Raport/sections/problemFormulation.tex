@@ -1,0 +1,22 @@
+\section{Problem Formulation}
+\subsection{Problem}
+\label{subsection:Problems}
+Our project seeks to explore alternative approaches to make sign-to-speech translation more accessible and affordable. This would be done by using simple sensor technology called gyroscopes, and open source tools to achieve hand gesture recognition within the constraints of a rapid development cycle. This has the potential to result in a cheap and more accessible sign interpretation glove and help those who have to rely on hand language communication.
+
+%Limitations
+\subsection{Limitations}
+The whole project had some limitations, firstly a development time frame of two weeks and secondly a budget of 300 sek. 
+
+With limited time focus will be on getting sensor reading from a single finger. Once sensor reading was working for one finger, it can easily be replicated to the other.
+
+Also, due to time limitation only pitch and roll will be considered to calculate orientation. Yaw is excluded, as an accelerometer can not measure yaw, and gyroscope only measures change of yaw and can not provide absolute orientation without additional equipment. So yaw is excluded because it requires additional components beyond the intended sensor setup.
+
+Lastly, with a small budget the sensors had to be cheap. And while the LSM6DSO sensor is not ideal for the project, it is a reasonable choice given the constrained budget\cite{sensor}.
+
+%Research Question
+\subsection{Research Question}
+\begin{itemize}
+    \item Are gyroscope-accelerometer sensors suitable sensors for use in a sign-to-speech glove? \\
+    \item While being a cheeper option, will it provide accurate orientation and work reliably in real-time? \\
+
+\end{itemize}
