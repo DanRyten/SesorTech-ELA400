@@ -2,7 +2,7 @@
 \section[Threshold and color space Find which color space can isolate the iris the best]{Threshold and color space \\ Find which color space can isolate the iris the best}
 
 \subsection{Method}
-A good picture of the subject was taken, the quality of the image is highly dependant on the ligting as the contrast between the eyes and surrounding area needs to be high.
+A good picture of the subject was taken, the quality of the image is highly dependant on the lighting as the contrast between the eyes and surrounding area needs to be high.
 
 The approximate area surrounding the eyes was roughly cut out manually. The cropped image was put through the "Color Thresholder" app in matlab. The color spaces RGB, HSV, YCbCr \& L*a*b* were tried and only HSV \& YCbCr gave adequate results and was used to make two binary masks.
 
@@ -43,7 +43,7 @@ The color shifting of the iris is possible but requires mangual cropping, good l
 
 \subsection{Method}
 
-23 images of a calibration image was taken from varying angles, distances and orientations and inputed into the "Camera Calibration" app. Then the outliers were removed based on the "Mean error pixels" resulting in two images being removed. 
+23 images of a calibration image was taken from varying angles, distances and orientations and inputed into the "Camera Calibration" app. Then the outliers were removed based on the "Mean error pixels" resulting in twelve images being removed. 
 
 The app then exported a camera parameter file which was used to undistort the images. The efficacy of this undistortion was measured by comparing the length of a pen in the image and compared it to its known length.
 \begin{figure}[H]
@@ -61,4 +61,19 @@ The resulting undistorted images:
     \caption{The two undistorted images}
 \end{figure}
 
+\begin{center}
+\begin{tabular}{ c | c c }
+       & Image 1 & Image 2 \\ 
+       \hline
+ Distorted & 153.5117mm & 147.7126mm \\  
+ Undistorted & 154.6838mm & 157.2483mm    
+\end{tabular}
+\end{center}
+
+The true length of the pen was measured to be 145mm long. The undistrotion resulted in a increased error from the actual pen.
+
 \subsection{Conclusion}
+
+Despite the tools seemingly undistorting the image the actual efficacy was negativly effected. This is theorised to firstly be due to the camera properties not being overly distorted, perhaps due to preprocessing perfomed by the camera itself. This could lead to over correction by the tool. 
+Secondly the calibration photos could have not been up to the required quanitity and quality leading to bad parameters. 
+Thirdly the length measurement was done by hand and human error could have occured.
